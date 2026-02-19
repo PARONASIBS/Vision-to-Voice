@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NARRAT👀NS</title>
+    <link rel="icon" href="{{ url_for('static', filename='images/rechanged logo.png') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='CSS/comic_preview.css') }}">
+</head>
+
+<body>
+
+    <!-- Background overlay -->
+    <div class="overlay"></div>
+
+    <!-- Header / Navbar -->
+    <header>
+        <img src="{{ url_for('static', filename='images/rechanged logo.png') }}" alt="Narratoons Logo" class="site-logo" />
+        <nav>
+            <ul class="nav-menu">
+                <li><a href="{{ url_for('main') }}">Home</a></li>
+                <li><a href="{{ url_for('about_us') }}">About us</a></li>
+                <li><a href="{{ url_for('contact') }}">Contact</a></li>
+                <li><a href="{{ url_for('logout') }}">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <div class="main-content">
+
+        <!-- Left Panel: Disc & Audio Player -->
+        <div class="content-left">
+            
+            <!-- Rotating Disc Image -->
+            <div class="disc-container">
+                <img src="{{ url_for('static', filename='images/old music player disc.png') }}" 
+                     alt="Music Disc" 
+                     class="disc-image" 
+                     id="discImage">
+            </div>
+
+            <!-- Custom Audio Player -->
+            <div class="audio-player">
+                <audio id="comicAudio" style="display: none;">
+                    {% if comic.audio_path %}
+                        <source src="{{ comic.audio_path }}" type="audio/mpeg">
+                    {% endif %}
+                </audio>
+
+                <!-- Player Controls -->
+                <div class="player-controls">
+                    <button class="control-btn" id="backwardBtn" title="Backward 5s">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M11 18V6l-8.5 6 8.5 6zm.5-6l8.5 6V6l-8.5 6z"/>
+                        </svg>
+                        <span class="skip-text">-5s</span>
+                    </button>
+
+                    <button class="control-btn play-btn" id="playPauseBtn">
+                        <svg id="playIcon" width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M8 5v14l11-7z"/>
+                        </svg>
+                        <svg id="pauseIcon" width="32" height="32" viewBox="0 0 24 24" fill="currentColor" style="display: none;">
+                            <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
+                        </svg>
+                    </button>
+
+                    <button class="control-btn" id="forwardBtn" title="Forward 5s">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M4 18l8.5-6L4 6v12zm9-12v12l8.5-6L13 6z"/>
+                        </svg>
+                        <span class="skip-text">+5s</span>
+                    </button>
+                </div>
+
+                <!-- Progress Bar -->
+                <div class="progress-container">
+                    <input type="range" id="progressBar" class="progress-bar" min="0" max="100" value="0">
+                    <div class="time-display">
+                        <span id="currentTime">0:00</span>
+                        <span id="duration">0:00</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="button-group">
+                <form action="{{ url_for('favourite_comic', comic_id=comic.id) }}" method="POST">
+                    <button class="cta-btn favourite-btn" type="submit">
+                        Favourite
+                    </button>
+                </form>
+
+                {% if not comic.audio_path %}
+                    <form action="{{ url_for('convert_comic', comic_id=comic.id) }}" method="POST">
+                        <button class="cta-btn convert-btn" type="submit">
+                            Convert to Audio
+                        </button>
+                    </form>
+                {% endif %}
+
+                <form action="{{ url_for('delete_comic', comic_id=comic.id) }}" method="POST" 
+                      onsubmit="return confirm('Are you sure you want to delete this comic?');">
+                    <button class="cta-btn delete-btn" type="submit">
+                        Delete
+                    </button>
+                </form>
+            </div>
+
+        </div>
+
+        <!-- Right Panel: Title + Comic Cover OR Text Display -->
+        <div class="content-right">
+            
+            <h2 class="comic-title">{{ comic.title }}</h2>
+
+            <!-- Show Comic Cover (when no audio generated yet) -->
+            {% if not comic.audio_path %}
+                <div class="comic-display-area">
+                    <div class="comic-card">
+                        {% if comic.image_path %}
+                            <img src="{{ url_for('static', filename=comic.image_path.replace('static/', '')) }}" 
+                                 alt="{{ comic.title }}">
+                        {% else %}
+                            <img src="{{ url_for('static', filename='images/book_1.png') }}" 
+                                 alt="Default Comic Cover">
+                        {% endif %}
+                    </div>
+                    <p style="text-align: center; color: #ffb347; margin-top: 1rem; font-style: italic;">
+                        Click "Convert to Audio" to generate text and audio narration
+                    </p>
+                </div>
+            {% endif %}
+
+            <!-- Show Text Display (when audio generated) -->
+            {% if comic.audio_path %}
+                <div class="comic-display-area">
+                    <div class="text-display">
+                        <div class="text-content">
+                            {% if cleaned_text %}
+                                {{ cleaned_text }}
+                            {% else %}
+                                <p class="no-text">Audio generated but text not saved. Please reconvert to save text.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- View PDF Button (show only when audio exists) -->
+                {% if comic.file_path %}
+                    <a href="{{ url_for('static', filename=comic.file_path.replace('static/', '')) }}" 
+                       target="_blank" 
+                       class="view-pdf-btn">
+                        View Original PDF
+                    </a>
+                {% endif %}
+            {% endif %}
+
+        </div>
+
+    </div>
+
+    <script>
+        // Audio Player Functionality
+        const audio = document.getElementById('comicAudio');
+        const playPauseBtn = document.getElementById('playPauseBtn');
+        const playIcon = document.getElementById('playIcon');
+        const pauseIcon = document.getElementById('pauseIcon');
+        const backwardBtn = document.getElementById('backwardBtn');
+        const forwardBtn = document.getElementById('forwardBtn');
+        const progressBar = document.getElementById('progressBar');
+        const currentTimeEl = document.getElementById('currentTime');
+        const durationEl = document.getElementById('duration');
+        const discImage = document.getElementById('discImage');
+
+        let isPlaying = false;
+
+        // Play/Pause Toggle
+        playPauseBtn.addEventListener('click', () => {
+            if (isPlaying) {
+                audio.pause();
+                playIcon.style.display = 'block';
+                pauseIcon.style.display = 'none';
+                discImage.classList.remove('spinning');
+            } else {
+                audio.play();
+                playIcon.style.display = 'none';
+                pauseIcon.style.display = 'block';
+                discImage.classList.add('spinning');
+            }
+            isPlaying = !isPlaying;
+        });
+
+        // Backward 5 seconds
+        backwardBtn.addEventListener('click', () => {
+            audio.currentTime = Math.max(0, audio.currentTime - 5);
+        });
+
+        // Forward 5 seconds
+        forwardBtn.addEventListener('click', () => {
+            audio.currentTime = Math.min(audio.duration, audio.currentTime + 5);
+        });
+
+        // Update progress bar
+        audio.addEventListener('timeupdate', () => {
+            if (audio.duration) {
+                const progress = (audio.currentTime / audio.duration) * 100;
+                progressBar.value = progress;
+                currentTimeEl.textContent = formatTime(audio.currentTime);
+            }
+        });
+
+        // Seek functionality
+        progressBar.addEventListener('input', (e) => {
+            const time = (e.target.value / 100) * audio.duration;
+            audio.currentTime = time;
+        });
+
+        // Load duration
+        audio.addEventListener('loadedmetadata', () => {
+            durationEl.textContent = formatTime(audio.duration);
+        });
+
+        // Auto-stop disc when audio ends
+        audio.addEventListener('ended', () => {
+            isPlaying = false;
+            playIcon.style.display = 'block';
+            pauseIcon.style.display = 'none';
+            discImage.classList.remove('spinning');
+            progressBar.value = 0;
+        });
+
+        // Format time helper
+        function formatTime(seconds) {
+            if (isNaN(seconds)) return '0:00';
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+    </script>
+
+</body>
+
+</html>

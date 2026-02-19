@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome - Narratoons</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Bangers&display=swap');
+
+    body,
+    html {
+      margin: 0;
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+      font-family: 'Bangers', cursive;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #222;
+      perspective: 1000px;
+    }
+
+    /* ---------------- BACKGROUND OVERLAY ---------------- */
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -1;
+      background: linear-gradient(rgba(12, 12, 12, 0.9), rgba(0, 0, 0, 0.9)),
+        url('{{ url_for("static", filename="images/Background img.png") }}') center/cover no-repeat;
+      animation: overlayAnim 15s ease-in-out infinite alternate;
+    }
+
+    @keyframes overlayAnim {
+      0% { background-position: center top; }
+      50% { background-position: center center; }
+      100% { background-position: center bottom; }
+    }
+
+    .start-animation .overlay {
+      opacity: 1;
+    }
+
+    /* ---------------- WELCOME CONTENT ---------------- */
+    .welcome-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      opacity: 1;
+      transform: translateY(0);
+      transition: opacity 1s ease, transform 1s ease;
+    }
+
+    .welcome-content.fade-out {
+      opacity: 0;
+      transform: scale(0.95); /* optional subtle shrink effect */
+    }
+
+    .robot-img {
+      width: 600px;
+      height: auto;
+      margin-bottom: 30px;
+      opacity: 0;
+      transform: scale(0.6);
+      transition: opacity 0.8s ease-out,
+                  transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .start-animation .robot-img {
+      opacity: 1;
+      transform: scale(1);
+      transition-delay: 0.5s;
+    }
+
+    .welcome-box {
+      background: rgba(0, 0, 0, 0.85);
+      border: 3px solid #ffb347;
+      padding: 2rem 3rem;
+      border-radius: 1rem;
+      text-align: center;
+      color: #ff9c1a;
+      font-size: 2.5rem;
+      opacity: 0;
+      transform: translateY(-20px) scale(0.95);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+      min-width: 280px;
+    }
+
+    .start-animation .welcome-box {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      transition-delay: 1.2s;
+    }
+
+    .typewriter {
+      display: inline-block;
+      border-right: 2px solid #ffb347;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    @media(max-width: 600px) {
+      .robot-img { width: 300px; margin-bottom: 20px; }
+      .welcome-box { font-size: 1.5rem; padding: 1.5rem 2rem; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="overlay"></div>
+
+  <div class="welcome-content" id="welcome-animation-content">
+    <img class="robot-img" src="{{ url_for('static', filename='images/hi.png') }}" alt="Robot Mascot">
+    <div class="welcome-box">
+      <span id="welcome-text" class="typewriter"></span>
+    </div>
+  </div>
+
+  <script>
+    const username = "{{ username }}";
+    const message = `Welcome, ${username}!`;
+    const welcomeContent = document.getElementById('welcome-animation-content');
+    const welcomeText = document.getElementById('welcome-text');
+
+    function typeWriter(text, i, callback) {
+      if (i < text.length) {
+        welcomeText.innerHTML += text.charAt(i);
+        setTimeout(() => typeWriter(text, i + 1, callback), 100);
+      } else {
+        callback();
+      }
+    }
+
+    window.onload = () => {
+      document.body.classList.add('start-animation');
+
+      setTimeout(() => {
+        typeWriter(message, 0, () => {
+          // Fade out only the welcome content
+          setTimeout(() => {
+            welcomeContent.classList.add('fade-out');
+            setTimeout(() => {
+              window.location.href = "{{ url_for('main') }}";
+            }, 1000); // wait for fade-out to complete
+          }, 1000); // wait 1s after typing
+        });
+      }, 1500); // delay after robot and box appear
+    };
+  </script>
+</body>
+
+</html>

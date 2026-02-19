@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Contact Us | NARRAT👀NS</title>
+  <link rel="icon" href="{{ url_for('static', filename='images/rechanged logo.png') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='CSS/contactus.css') }}" />
+</head>
+<body>
+  <div class="overlay"></div>
+
+  <header>
+    <img src="{{ url_for('static', filename='images/rechanged logo.png') }}" alt="Narratoons Logo" class="site-logo" />
+    <nav>
+      <ul class="nav-menu">
+        <li><a href="{{ url_for('landing_page') }}">Home</a></li>
+        <li><a href="{{ url_for('about_us') }}">About Us</a></li>
+        <li><a href="{{ url_for('contact') }}">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <section class="main-content">
+      <div class="content-left">
+        <img src="{{ url_for('static', filename='images/Title.png') }}" alt="Narratoons Title" class="hero-title-img" />
+        <p class="tagline">Comics Beyond Sight – Listen, Imagine, Enjoy...!</p>
+        <p class="desc">
+          Have questions or feedback? Our friendly assistant is here to help! Fill out the form and we’ll respond as soon as possible.
+        </p>
+
+        <form class="contact-form" id="contactForm" method="POST" action="{{ url_for('contact') }}">
+          <label for="name">Your Name</label>
+          <input type="text" id="name" name="name" placeholder="Enter your name" required />
+
+          <label for="email">Your Email</label>
+          <input type="email" id="email" name="email" placeholder="Enter your email" required />
+
+          <label for="message">Your Message</label>
+          <textarea id="message" name="message" rows="5" placeholder="Type your message..." required></textarea>
+
+          <button type="submit" class="cta-btn">Send Message</button>
+          <button type="button" class="cta-btn" onclick='window.location.href="{{ url_for("landing_page") }}"'>Back to Home</button>
+        </form>
+      </div>
+
+      <div class="content-right">
+        <img src="{{ url_for('static', filename='images/model_7.png') }}" alt="Mascot" class="mascot-img" />
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // Auto-hide flash messages after 5 seconds
+    setTimeout(function() {
+        const flashMessages = document.querySelector('.flash-messages');
+        if (flashMessages) {
+            flashMessages.style.opacity = '0';
+            flashMessages.style.transition = 'opacity 0.5s';
+            setTimeout(() => flashMessages.remove(), 500);
+        }
+    }, 5000);
+    
+    // REMOVE THE PREVENT DEFAULT - LET FORM SUBMIT NORMALLY
+    // Form will now submit to Flask backend
+</script>
+
+</body>
+</html>

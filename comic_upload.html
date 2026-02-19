@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>NARRAT👀NS</title>
+  <link rel="icon" href="{{ url_for('static', filename='images/rechanged logo.png') }}" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{{ url_for('static', filename='CSS/comic_upload.css') }}">
+  <link rel="icon" href="{{ url_for('static', filename='images/rechanged logo.png') }}">
+  <style>
+    body {
+      font-family: 'Constantia', serif;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="overlay"></div>
+
+  <!-- Navbar -->
+  <header>
+    <img src="{{ url_for('static', filename='images/rechanged logo.png') }}" alt="Narratoons Logo" class="site-logo" />
+    <nav>
+      <ul class="nav-menu">
+        <li><a href="{{ url_for('main') }}">Home</a></li>
+        <li><a href="{{ url_for('about_us') }}">About us</a></li>
+        <li><a href="{{ url_for('contact') }}">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Audio Upload Section -->
+  <main>
+    <div class="audio-upload-main">
+      <img src="{{ url_for('static', filename='images/model_1.png') }}" alt="DJ Robot" class="dj-robot" />
+      <form class="audio-upload-form" id="audioUploadForm" method="POST" enctype="multipart/form-data"
+        action="{{ url_for('comic_upload') }}">
+
+        <label for="audioFileName">File Name</label>
+        <div class="input-row">
+          <input type="text" id="audioFileName" name="audioFileName" required placeholder="Enter file name" />
+          <span class="input-icon">&#x1F5D2;</span>
+        </div>
+
+        <label for="audioFile">Upload your file</label>
+        <div class="input-row">
+          <input type="file" id="audioFile" name="audioFile" accept="application/pdf" required />
+          <span class="input-icon">&#128194;</span>
+        </div>
+
+        <button type="submit" class="btn upload-btn">Upload</button>
+        <button type="button" class="btn back-btn" id="backToMain">Back to Main Page</button>
+      </form>
+
+    </div>
+  </main>
+
+  <!-- Loading Animation Overlay -->
+  <div id="loadingOverlay" style="display:none;">
+    <div class="background-overlay"></div>
+    <div class="loading-container">
+      <img src="{{ url_for('static', filename='images/Title.png') }}" alt="Narratoons Title" class="app-title" />
+      <div class="progress-bar-wrapper">
+        <div class="progress-bar-fill" id="progressBarFill"></div>
+        <span class="progress-text" id="progressText">0%</span>
+      </div>
+      <div class="robot-image-container">
+        <img id="robotImage" src="{{ url_for('static', filename='images/image8.png') }}" alt="Loading Robot" />
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Optional: simple validation before submitting
+    document.getElementById('audioUploadForm').addEventListener('submit', function (e) {
+      const fileName = document.getElementById('audioFileName').value.trim();
+      const fileInput = document.getElementById('audioFile');
+      const file = fileInput.files[0];
+
+      if (!fileName) {
+        e.preventDefault();
+        alert("Please enter a file name.");
+        return;
+      }
+
+      if (!file) {
+        e.preventDefault();
+        alert("Please upload a PDF file.");
+        return;
+      }
+
+      if (!file.name.toLowerCase().endsWith('.pdf')) {
+        e.preventDefault();
+        alert("Only PDF files allowed.");
+        return;
+      }
+
+      // If everything is fine, the form will submit naturally
+    });
+  </script>
+
+</body>
+
+</html>

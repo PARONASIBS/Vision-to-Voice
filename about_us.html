@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>About Us - NARRAT👀NS</title>
+  <link rel="icon" href="{{ url_for('static', filename='images/rechanged logo.png') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='CSS/about_us.css') }}" />
+</head>
+<body>
+  <div class="overlay"></div>
+
+  <!-- Header -->
+  <header>
+    <img src="{{ url_for('static', filename='images/rechanged logo.png') }}" alt="Narratoons Logo" class="site-logo" />
+    <nav>
+      <ul class="nav-menu">
+        <li><a href="{{ url_for('landing_page') }}">Home</a></li>
+        <li><a href="{{ url_for('about_us') }}">About Us</a></li>
+        <li><a href="{{ url_for('contact') }}">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Main About Section -->
+  <main class="about-container">
+    <h1>About <img src="{{ url_for('static', filename='images/Title.png') }}" alt="Narratoons Title" class="hero-title-img" /></h1>
+    <p>
+      Welcome to <strong>Narratoons</strong> — where storytelling meets sound!  
+      Our platform transforms comic books and stories into immersive audio experiences, 
+      making narratives accessible and enjoyable for everyone.
+    </p>
+    <p>
+      This page helps visitors understand who we are and what drives our mission.  
+      Narratoons was created to bridge the gap between imagination and experience — 
+      by bringing <strong>comics to life through sound, voice, and creativity</strong>.
+    </p>
+    <p>
+      Our vision is to make visual storytelling inclusive — especially for those 
+      who prefer to listen, imagine, and engage beyond the screen.
+    </p>
+    <button class="cta-btn" id="backBtn">Back to Home</button>
+  </main>
+
+  <footer>
+    <p>© 2025 Narratoons. All rights reserved.</p>
+  </footer>
+
+  <script>
+    // Redirect back to home page
+    document.getElementById('backBtn').addEventListener('click', () => {
+      window.location.href = "{{ url_for('landing_page') }}";
+    });
+  </script>
+</body>
+</html>

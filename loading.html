@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NARRAT👀NS</title>
+    <link rel="icon" href="{{ url_for('static', filename='images/rechanged logo.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='CSS/Loading.css') }}" />
+</head>
+
+<body>
+
+    <div class="background-overlay"></div>
+
+    <div class="loading-container">
+        <img src="{{ url_for('static', filename='images/Title.png') }}" alt="Narratoons Logo" class="site-logo" />
+
+        <div class="progress-bar-wrapper">
+            <div class="progress-bar-fill" id="progressBarFill"></div>
+            <span class="progress-text" id="progressText">0%</span>
+        </div>
+        <div class="robot-image-container">
+            <img id="robotImage" src="{{ url_for('static', filename='images/image8.png') }}" alt="Loading Robot" />
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const progressBarFill = document.getElementById('progressBarFill');
+            const progressText = document.getElementById('progressText');
+            const robotImage = document.getElementById('robotImage');
+
+            const animationSequence = [
+                "{{ url_for('static', filename='images/image8.png') }}",
+                "{{ url_for('static', filename='images/image5.png') }}",
+                "{{ url_for('static', filename='images/image1.png') }}",
+                "{{ url_for('static', filename='images/image7.png') }}",
+                "{{ url_for('static', filename='images/image3.png') }}",
+                "{{ url_for('static', filename='images/image6.png') }}",
+                "{{ url_for('static', filename='images/image4.png') }}",
+                "{{ url_for('static', filename='images/image2.png') }}"
+            ];
+
+            let progress = 0;
+            let imageIndex = 0;
+
+            const animationInterval = setInterval(() => {
+                robotImage.src = animationSequence[imageIndex];
+                imageIndex = (imageIndex + 1) % animationSequence.length;
+            }, 100);
+
+            const loadingInterval = setInterval(() => {
+                if (progress >= 100) {
+                    clearInterval(loadingInterval);
+                    clearInterval(animationInterval);
+                    progressText.textContent = '100%';
+                    robotImage.src = "{{ url_for('static', filename='images/model_3.png') }}";
+
+                    // Delay before showing welcome animation page
+                    setTimeout(() => {
+                        window.location.href = "{{ url_for('welcome') }}"; // redirect to welcome page
+                    }, 800); // 0.8s delay to show final frame
+                    return;
+                }
+
+                progress += 1;
+                progressBarFill.style.width = `${progress}%`;
+                progressText.textContent = `${progress}%`;
+            }, 50);
+        });
+    </script>
+
+</body>
+
+</html>
