@@ -24,12 +24,12 @@ def get_db_connection():
 
 
 # -------- MAIL CONFIGURATION -------- #
-application.config['MAIL_SERVER'] = 'smtp.gmail.com'
-application.config['MAIL_PORT'] = 465
+application.config['MAIL_SERVER'] = ''
+application.config['MAIL_PORT'] = 
 application.config['MAIL_USE_SSL'] = True
-application.config['MAIL_USERNAME'] = 'narratoons5@gmail.com'
-application.config['MAIL_PASSWORD'] = 'yyjryqoeozaplteh'
-application.config['MAIL_DEFAULT_SENDER'] = 'narratoons5@gmail.com'
+application.config['MAIL_USERNAME'] = ''
+application.config['MAIL_PASSWORD'] = ''
+application.config['MAIL_DEFAULT_SENDER'] = ''
 
 
 mail = Mail(application)
@@ -465,3 +465,4 @@ def logout():
 # -------- RUN APP -------- #
 if __name__ == '__main__':
     application.run(debug=True)
+
